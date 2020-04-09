@@ -1,11 +1,11 @@
-var shell = require('./shell')
 var mail = require('./mail')
+var process = require('child_process');
 
 function publish(req, res) {
     // 获取请求体
     let body = req.body;
     // 从请求体上获取需要的相关信息
-    let sshUrl = body.repository.ssh_url;
+    let cloneUrl = body.repository.clone_url;
     let name = body.repository.name;
 
     let blogNginxDest = name.replace(/-/g, "_") + "_nginx_dest";
@@ -16,20 +16,20 @@ function publish(req, res) {
         return;
     }
 
-    // 执行shell
-    let result = shell.executeShellSync('./shell/publish.sh', [name, sshUrl, nginxDest]);
-    if (!checkoutResult.result) {
-        // 执行失败
-        out = "============publish[./shell/publish.sh " + name + " " + sshUrl + " " + nginxDest + "]=============<br/>" + result.out + "<br/><br/>";
-        error = "============publish[./shell/publish.sh " + name + " " + sshUrl + " " + nginxDest + "]=============<br/>" + result.error + "<br/><br/>";
-        mail.sendMail(false, out, error);
+    let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + nginxDest + "】";
+    console.log(message);
+    process.execFile('./shell/publish.sh', [name, cloneUrl, nginxDest], function (error, stdout, stderr) {
+        if (error) {
+            console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
+            mail.sendMail(false, stdout, stderr);
+            return;
+        }
 
-        var errorMsg = "发布blog【" + name + "】失败！";
-        res.send(errorMsg);
-        return;
-    }
+        console.log('执行成功！控制台信息为：\r' + stdout+ "\r参数为：" + message);
+        mail.sendMail(true, stdout, stderr);
+    });
 
-    res.send('Blog【' + name + '】发布成功')
+    res.send('Blog【' + name + '】正在发布，请稍后！')
 }
 
 exports.publish = publish

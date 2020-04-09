@@ -9,16 +9,29 @@ nginxDest=$3
 
 cd ./shell
 
-# clone
-git clone $github_url $name
-cloneFlag=$?
-if [ 0 != $cloneFlag ]; then
-  # 拉取代码失败
-  exit 1
+# clone or pull
+if [ ! -d $name ]; then
+  # 文件夹不存在，则clone
+  git clone $github_url $name
+  cloneFlag=$?
+  if [ 0 != $cloneFlag ]; then
+    # 拉取代码失败
+    echo 拉取代码失败
+    exit 1
+  fi
+  cd $name
+else
+  cd $name
+  git pull
+  pullFlag=$?
+  if [ 0 != $pullFlag ]; then
+    # 拉取代码失败
+    echo 拉取代码失败
+    exit 1
+  fi
 fi
 
 # 初始化npm依赖
-cd $name
 npm install --registry=https://registry.npm.taobao.org
 installFlag=$?
 if [ 0 != $installFlag ]; then
@@ -46,7 +59,7 @@ if [ 0 != $rmOldFileFlag ]; then
 fi
 
 # 复制生成的静态文件
-cp -r generate/* $nginxDest/
+cp -r public/* $nginxDest/
 cpFileFlag=$?
 if [ 0 != $cpFileFlag ]; then
   # npm install失败
