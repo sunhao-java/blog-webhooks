@@ -3,16 +3,18 @@
 # 工程名称
 name=$1
 # github地址
-github_url=$2
+githubUrl=$2
 # nginx目标地址
-nginxDest=$3
+nginxDestKey=$3
+
+nginxDest=`eval echo '$'"${nginxDestKey}"`
 
 cd ./shell
 
 # clone or pull
 if [ ! -d $name ]; then
   # 文件夹不存在，则clone
-  git clone $github_url $name
+  git clone $githubUrl $name
   cloneFlag=$?
   if [ 0 != $cloneFlag ]; then
     # 拉取代码失败

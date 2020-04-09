@@ -8,17 +8,16 @@ function publish(req, res) {
     let cloneUrl = body.repository.clone_url;
     let name = body.repository.name;
 
-    let blogNginxDest = name.replace(/-/g, "_") + "_nginx_dest";
-    let nginxDest = process.env[blogNginxDest];
+    let blogNginxDestKey = name.replace(/-/g, "_") + "_nginx_dest";
 
-    if ("" == nginxDest) {
+    if ("" == blogNginxDestKey) {
         res.send("发布失败，工程【" + name + "】Nginx目标地址为空！");
         return;
     }
 
-    let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + nginxDest + "】";
+    let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + blogNginxDestKey + "】";
     console.log(message);
-    process.execFile('./shell/publish.sh', [name, cloneUrl, nginxDest], function (error, stdout, stderr) {
+    process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey], function (error, stdout, stderr) {
         if (error) {
             console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
             mail.sendMail(false, stdout, stderr);
