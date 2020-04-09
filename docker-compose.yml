@@ -2,7 +2,7 @@ version: '2'
 services:
   gitlab-webhooks:
     image: sunhaojava/blog-webhooks:latest
-    container_name: gitlab-webhooks
+    container_name: blog-webhooks
     restart: always
     network_mode: "bridge"
     ports:
