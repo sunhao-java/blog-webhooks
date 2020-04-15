@@ -46,7 +46,10 @@ fi
 
 # 生成静态文件
 source=
-if [ "hexo" == $type ]; then
+type_hexo="hexo"
+type_gitbook="gitbook"
+
+if [ "$type_hexo"x = "$type"x ]; then
   # hexo
   hexo generate
   generateFlag=$?
@@ -56,7 +59,7 @@ if [ "hexo" == $type ]; then
     exit 1
   fi
   source="public"
-elif [ "gitbook" == $type ]; then
+elif [ "$type_gitbook"x = "$type"x ]; then
   # gitbook
   gitbook build
   gitbookFlag=$?
