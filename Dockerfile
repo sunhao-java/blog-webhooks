@@ -6,9 +6,9 @@ WORKDIR /home
 COPY ./ ./
 
 # 安装依赖
-RUN npm install hexo -g --registry=https://registry.npm.taobao.org && \
-	chmod u+x ./shell/*.sh && \
-	npm install --registry=https://registry.npm.taobao.org 
+RUN npm install hexo gitbook-cli -g && \
+	npm install && \
+	chmod u+x ./shell/*.sh
 
 EXPOSE 3000
 

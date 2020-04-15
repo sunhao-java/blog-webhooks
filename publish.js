@@ -1,4 +1,5 @@
-var mail = require('./mail')
+var mail = require('./utils/mail')
+var http = require('./utils/http')
 var process = require('child_process');
 
 function publish(req, res) {
@@ -8,27 +9,39 @@ function publish(req, res) {
     let cloneUrl = body.repository.clone_url;
     let name = body.repository.name;
 
-    let blogNginxDestKey = name.replace(/-/g, "_") + "_nginx_dest";
+    // 获取url上的参数，参数名为type
+    let type = req.query.type;
 
-    if ("" == blogNginxDestKey) {
-        res.send("发布失败，工程【" + name + "】Nginx目标地址为空！");
+    if (!type && "" == type) {
+        type = "hexo";
+    }
+
+    if ("hexo" != type && "gitbook" != type) {
+        http.sendError(res, "发布类型不匹配，只能是hexo或者gitbook！此时为【" + type + "】！")
         return;
     }
 
-    let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + blogNginxDestKey + "】";
+    let blogNginxDestKey = name.replace(/-/g, "_") + "_nginx_dest";
+
+    if ("" == blogNginxDestKey) {
+        http.sendError(res, "发布失败，工程【" + name + "】Nginx目标地址为空！")
+        return;
+    }
+
+    let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + blogNginxDestKey + "】，type=【" + type + "】";
     console.log(message);
-    process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey], function (error, stdout, stderr) {
+    process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey, type], function (error, stdout, stderr) {
         if (error) {
             console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
             mail.sendMail(false, stdout, stderr);
             return;
         }
 
-        console.log('执行成功！控制台信息为：\r' + stdout+ "\r参数为：" + message);
+        console.log('执行成功！控制台信息为：\r' + stdout + "\r参数为：" + message);
         mail.sendMail(true, stdout, stderr);
     });
 
-    res.send('Blog【' + name + '】正在发布，请稍后！')
+    http.sendSuccess(res, 'Blog【' + name + '】正在发布，请稍后！')
 }
 
 exports.publish = publish

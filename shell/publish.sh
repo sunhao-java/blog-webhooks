@@ -6,6 +6,8 @@ name=$1
 githubUrl=$2
 # nginx目标地址
 nginxDestKey=$3
+# 发布类型
+type=$4
 
 nginxDest=`eval echo '$'"${nginxDestKey}"`
 
@@ -43,12 +45,30 @@ if [ 0 != $installFlag ]; then
 fi
 
 # 生成静态文件
-hexo generate
-generateFlag=$?
-if [ 0 != $generateFlag ]; then
-  # npm install失败
-  echo 生成hexo静态文件失败！
-  exit 1
+source=
+if [ 'hexo' == $type ]; then
+  # hexo
+  hexo generate
+  generateFlag=$?
+  if [ 0 != $generateFlag ]; then
+    # hexo generate失败
+    echo 生成hexo静态文件失败！
+    exit 1
+  fi
+  source="public"
+elif [ 'gitbook' == $type ]; then
+  # gitbook
+  gitbook build
+  gitbookFlag=$?
+  if [ 0 != $gitbookFlag ]; then
+    # gitbook build失败
+    echo 生成gitbook静态文件失败！
+    exit 1
+  fi
+  source="_book"
+else
+    echo 发布类型不合法！发布类型为$type
+    exit 1
 fi
 
 # 首先删除原来的静态文件
@@ -61,7 +81,7 @@ if [ 0 != $rmOldFileFlag ]; then
 fi
 
 # 复制生成的静态文件
-cp -r public/* $nginxDest/
+cp -r $source/* $nginxDest/
 cpFileFlag=$?
 if [ 0 != $cpFileFlag ]; then
   # npm install失败
