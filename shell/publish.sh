@@ -11,6 +11,11 @@ type=$4
 
 nginxDest=`eval echo '$'"${nginxDestKey}"`
 
+if [ "" = "$nginxDest" ]; then
+  echo Nginx发布目录为空！请检查配置！当前的nginxDestKey为【$nginxDestKey】
+  exit 1
+fi
+
 cd ./shell
 
 # clone or pull
@@ -35,21 +40,21 @@ else
   fi
 fi
 
-# 初始化npm依赖
-npm install --registry=https://registry.npm.taobao.org
-installFlag=$?
-if [ 0 != $installFlag ]; then
-  # npm install失败
-  echo npm install失败！
-  exit 1
-fi
-
 # 生成静态文件
 source=
 type_hexo="hexo"
 type_gitbook="gitbook"
 
 if [ "$type_hexo"x = "$type"x ]; then
+  # 初始化npm依赖
+  npm install --registry=https://registry.npm.taobao.org
+  installFlag=$?
+  if [ 0 != $installFlag ]; then
+    # npm install失败
+    echo npm install失败！
+    exit 1
+  fi
+
   # hexo
   hexo generate
   generateFlag=$?
@@ -60,6 +65,15 @@ if [ "$type_hexo"x = "$type"x ]; then
   fi
   source="public"
 elif [ "$type_gitbook"x = "$type"x ]; then
+  # 初始化插件
+  gitbook install
+  gitbookInstallFlag=$?
+  if [ 0 != $gitbookInstallFlag ]; then
+    # gitbook install失败
+    echo gitbook install失败！
+    exit 1
+  fi
+
   # gitbook
   gitbook build
   gitbookFlag=$?
