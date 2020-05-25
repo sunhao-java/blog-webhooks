@@ -18,7 +18,7 @@ function sendMessage(name, result, out, error, res) {
         },
         body: {
             "msgtype": "markdown",
-            "text": {
+            "markdown": {
                 "title": "webhooks-【" + name + "】发布结果",
                 "text": message
             },
@@ -30,11 +30,7 @@ function sendMessage(name, result, out, error, res) {
 
     // 向钉钉群推送
     request(options, function (error, response, body) {
-        console.log(error);
-        console.log("===============================");
-        console.log(response);
-        console.log("===============================");
-        console.log(body);
+        
     });
 }
 
