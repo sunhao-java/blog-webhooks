@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:13.13-alpine
 
 LABEL maintainer="Sunhao <sunhao.java@gmail.com>"
 LABEL VERSION="${IMAGE_VERSION}" ARCHITECURE="amd64"
@@ -14,7 +14,7 @@ WORKDIR /home
 COPY ./ ./
 
 # 安装依赖
-RUN npm install hexo gitbook-cli -g && \
+RUN npm install hexo-cli@3.1.0 gitbook-cli@2.3.2 -g && \
 	npm install && \
 	chmod u+x ./shell/*.sh
 
