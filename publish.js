@@ -1,5 +1,5 @@
 var http = require('./utils/http')
-var dingding = required('./utils/dingding')
+var dingding = require('./utils/dingding')
 var process = require('child_process');
 
 function publish(req, res) {

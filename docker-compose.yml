@@ -8,17 +8,8 @@ services:
     ports:
       - "9098:3000"
     environment:
-      # 邮件配置
-      # 发件箱地址
-      - MAIL_SMTP_HOST=${MAIL_SMTP_HOST}
-      # 发件箱端口
-      - MAIL_SMTP_PORT=${MAIL_SMTP_PORT}
-      # 是否启用ssl
-      - MAIL_SMTP_SSL=${MAIL_SMTP_SSL}
-      # 发件人
-      - MAIL_SMTP_USER=${MAIL_SMTP_USER}
-      # 发件人密码
-      - MAIL_SMTP_PASSWORD=${MAIL_SMTP_PASSWORD}
+      # 钉钉机器人的token
+      - DING_TOKEN=${DING_TOKEN}
       # 博客列表
       - blog_nginx_dest=/home/nginx/www/blog
     env_file:
