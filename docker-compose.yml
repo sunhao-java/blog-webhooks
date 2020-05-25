@@ -11,6 +11,10 @@ services:
       # 钉钉机器人的token
       - DING_TOKEN=${DING_TOKEN}
       # 博客列表
-      - blog_nginx_dest=/home/nginx/www/blog
+      - blog_nginx_dest=/home/dist/blog
+      - lodsve_documents_nginx_dest=/home/helps
     env_file:
       - .env
+    volumes:
+      - ${DOCKER_VOLUME}/nginx/data/blog:/home/dist/blog
+      - ${DOCKER_VOLUME}/nginx/data/helps:/home/dist/helps

@@ -16,7 +16,10 @@ if [ "" = "$nginxDest" ]; then
   exit 1
 fi
 
-cd ./shell
+if [ ! -d /home/workspaces ]; then
+  mkdir -p /home/workspaces
+fi
+cd /home/workspaces
 
 # clone or pull
 if [ ! -d $name ]; then

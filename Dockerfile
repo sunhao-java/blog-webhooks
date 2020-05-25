@@ -8,7 +8,7 @@ LABEL Description="Blog Github Webhooks" Vendor="Sunhao<sunhao.java@gmail.com>"
 ENV TZ=Asia/Shanghai
 
 # 设置工作目录
-WORKDIR /home
+WORKDIR /home/blog-webhooks
 
 # 复制工程文件
 COPY ./ ./
