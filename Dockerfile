@@ -1,4 +1,4 @@
-FROM node:13.13-alpine
+FROM node:13.13.0-stretch
 
 LABEL maintainer="Sunhao <sunhao.java@gmail.com>"
 LABEL VERSION="${IMAGE_VERSION}" ARCHITECURE="amd64"
