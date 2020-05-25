@@ -37,16 +37,21 @@ function publish(req, res) {
 
     let message = "name=【" + name + "】，cloneUrl=【" + cloneUrl + "】，nginxDest=【" + blogNginxDestKey + "】，type=【" + type + "】";
     console.log(message);
-    process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey, type], function (error, stdout, stderr) {
-        if (error) {
-            console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
-            dingding.sendMessage(name, false, stdout, stderr, res);
-            return;
-        }
+    try {
+        process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey, type], function (error, stdout, stderr) {
+            if (error) {
+                console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
+                dingding.sendMessage(name, false, stdout, stderr, res);
+                return;
+            }
 
-        console.log('执行成功！控制台信息为：\r' + stdout + "\r参数为：" + message);
-        dingding.sendMessage(name, true, stdout, stderr, res);
-    });
+            console.log('执行成功！控制台信息为：\r' + stdout + "\r参数为：" + message);
+            dingding.sendMessage(name, true, stdout, stderr, res);
+        });
+    } catch (e) {
+        console.log(e)
+    }
+
 
     http.sendSuccess(res, 'Blog【' + name + '】正在发布，请稍后！')
 }
