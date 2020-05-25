@@ -11,6 +11,7 @@ function sendMessage(name, result, out, error, res) {
 
     var options = {
         url: 'https://oapi.dingtalk.com/robot/send?access_token=' + token,
+        json: true,
         method: 'POST',
         headers: {
             'content-Type': 'application/json'
@@ -29,7 +30,11 @@ function sendMessage(name, result, out, error, res) {
 
     // 向钉钉群推送
     request(options, function (error, response, body) {
-
+        console.log(error);
+        console.log("===============================");
+        console.log(response);
+        console.log("===============================");
+        console.log(body);
     });
 }
 
