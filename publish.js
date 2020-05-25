@@ -1,10 +1,17 @@
-var mail = require('./utils/mail')
 var http = require('./utils/http')
+var dingding = required('./utils/dingding')
 var process = require('child_process');
 
 function publish(req, res) {
     // 获取请求体
     let body = req.body;
+    // 分支名
+    let ref = body.ref;
+    if (ref.indexOf("master") == -1) {
+        http.sendSuccessWith200(res, "不需要发布！");
+        return;
+    }
+
     // 从请求体上获取需要的相关信息
     let cloneUrl = body.repository.clone_url;
     let name = body.repository.name;
@@ -33,12 +40,12 @@ function publish(req, res) {
     process.execFile('./shell/publish.sh', [name, cloneUrl, blogNginxDestKey, type], function (error, stdout, stderr) {
         if (error) {
             console.log('执行失败！异常为：\r' + stderr + "\r参数为：" + message);
-            mail.sendMail(false, stdout, stderr);
+            dingding.sendMessage(name, false, stdout, stderr, res);
             return;
         }
 
         console.log('执行成功！控制台信息为：\r' + stdout + "\r参数为：" + message);
-        mail.sendMail(true, stdout, stderr);
+        dingding.sendMessage(name, true, stdout, stderr, res);
     });
 
     http.sendSuccess(res, 'Blog【' + name + '】正在发布，请稍后！')
