@@ -16,5 +16,9 @@ services:
     env_file:
       - .env
     volumes:
+      # blog在宿主机上的静态文件路径
       - ${DOCKER_VOLUME}/nginx/data/blog:/home/dist/blog
+      # helps在宿主机上的静态文件路径
       - ${DOCKER_VOLUME}/nginx/data/helps:/home/dist/helps
+      # 预先在宿主机上git clone好代码
+      - ${DOCKER_VOLUME}/blog-webhooks/workspaces:/home/workspaces
